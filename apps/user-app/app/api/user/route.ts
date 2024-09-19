@@ -1,13 +1,17 @@
-const { PrismaClient } = require("@repo/db/client")
+import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server";
+import { authOptions } from "../../lib/auth";
 
-const client = new PrismaClient();
-
-export const GET = async ()=>{
-    const response = await client.user.deleteMany({
-    })
-    console.log(response);
+export const GET = async () => {
+    const session = await getServerSession(authOptions);
+    if (session.user) {
+        return NextResponse.json({
+            user: session.user
+        })
+    }
     return NextResponse.json({
-        msg: "user created"
+        message: "You are not logged in"
+    }, {
+        status: 403
     })
 }
